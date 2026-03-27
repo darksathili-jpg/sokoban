@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projet NSI — Le Sokoban | DarkSATHI Li</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- MathJax v3 -->
+  <script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] } };</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.3.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body data-theme="dark">
+
+  <!-- ═══ BOOTSTRAP PYSCRIPT INIT ═══ -->
+  <div id="pyscript-init">
+    <script type="py-editor" env="init_boot">
+print("PyScript 2026.3.1 initialisé.")
+  </script>
+  </div>
+
+  <!-- ═══════════════════════════════ NAVIGATION ═══ -->
+  <nav class="navbar-tp">
+    <span class="nav-titre">Projet NSI — Le Sokoban</span>
+    <a class="nav-lien" href="#partie1">1. Présentation</a>
+    <a class="nav-lien" href="#partie2">2. Classes</a>
+    <a class="nav-lien" href="#partie3">3. Base de données</a>
+    <a class="nav-lien" href="#partie4">4. Gameplay</a>
+    <a class="nav-lien" href="#partie5">5. Interface</a>
+    <a class="nav-lien" href="#partie6">6. Synthèse</a>
+    <div class="theme-btns">
+      <button class="btn-theme actif" id="btn-dark" onclick="setTheme('dark')">Sombre</button>
+      <button class="btn-theme" id="btn-light" onclick="setTheme('light')">Clair</button>
+      <button class="btn-theme" id="btn-projector" onclick="setTheme('projector')">Projecteur</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════ HERO ═══ -->
+  <header class="hero">
+    <h1>Le Sokoban</h1>
+    <img src="sokoban.png" alt="Sokoban" id="img_sokoban">
+    <p class="sous-titre">Projet Terminale NSI · DarkSATHI Li</p>
+    <div style="margin-top:1rem;">
+      <span class="badge-bo">Récursivité</span>
+      <span class="badge-bo">POO + héritage</span>
+      <span class="badge-bo">Pile / File</span>
+      <span class="badge-bo">Graphes BFS/DFS</span>
+      <span class="badge-bo">SQL</span>
+      <span class="badge-bo">Prog. dynamique</span>
+      <span class="badge-bo">Tkinter</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 1 — PRÉSENTATION
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie1">
+      <h2 class="titre-partie">1. Présentation du jeu Sokoban</h2>
+
+      <p>Imagine un entrepôt rempli de caisses éparpillées. Tu es le magasinier. Ta mission : pousser chaque caisse
+        jusqu'à son emplacement marqué au sol. Facile en apparence — mais attention, tu ne peux que <em>pousser</em>,
+        jamais tirer. Et si une caisse se retrouve coincée dans un angle, la partie est fichue.</p>
+
+      <p>Ce casse-tête s'appelle le <strong>Sokoban</strong> (倉庫番 en japonais, soit « gardien d'entrepôt »). Il a été
+        inventé en 1982 par Hiroyuki Imabayashi. Aujourd'hui encore, il fascine les chercheurs en informatique :
+        certains niveaux ont été mathématiquement prouvés comme appartenant aux problèmes les plus difficiles qui
+        existent.</p>
+
+      <p>Est-ce que ça t'intéresse d'en construire un toi-même, de A à Z, en Python ? C'est exactement ce que tu vas
+        faire dans ce projet.</p>
+
+      <h3 class="titre-sous">1.1 Les symboles du plateau</h3>
+
+      <p>Un niveau Sokoban se décrit sous forme d'une grille de caractères. Chaque case a un symbole :</p>
+
+      <table class="tab-cours">
+        <tr>
+          <th>Symbole</th>
+          <th>Signification</th>
+          <th>Représentation</th>
+        </tr>
+        <tr>
+          <td><code>#</code></td>
+          <td>Mur infranchissable</td>
+          <td>🧱</td>
+        </tr>
+        <tr>
+          <td><code> </code> (espace)</td>
+          <td>Sol vide</td>
+          <td>⬛</td>
+        </tr>
+        <tr>
+          <td><code>.</code></td>
+          <td>Cible — emplacement à remplir</td>
+          <td>🎯</td>
+        </tr>
+        <tr>
+          <td><code>$</code></td>
+          <td>Caisse (à pousser)</td>
+          <td>📦</td>
+        </tr>
+        <tr>
+          <td><code>*</code></td>
+          <td>Caisse posée sur une cible</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><code>@</code></td>
+          <td>Joueur</td>
+          <td>🧑</td>
+        </tr>
+        <tr>
+          <td><code>+</code></td>
+          <td>Joueur debout sur une cible</td>
+          <td>🕹️</td>
+        </tr>
+      </table>
+
+      <p>Regarde cet exemple minimal — le joueur 🧑 n'a qu'un seul mouvement à faire :</p>
+
+      <div style="text-align:center; margin:1.2rem 0;">
+        <div class="sokoban-demo" style="grid-template-columns: repeat(7, 36px);">
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-sol">🧑</div>
+          <div class="cell cell-sol">📦</div>
+          <div class="cell cell-cible">🎯</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-sol">⬛</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+          <div class="cell cell-mur">🧱</div>
+        </div>
+      </div>
+
+      <h3 class="titre-sous">1.2 Les règles</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Règles fondamentales</span>
+        <ul>
+          <li>Le joueur se déplace dans 4 directions : haut, bas, gauche, droite.</li>
+          <li>Si une caisse se trouve devant lui, il la pousse — à condition que la case derrière la caisse soit libre.
+          </li>
+          <li>Impossible de pousser deux caisses à la fois.</li>
+          <li>La partie est gagnée quand toutes les caisses reposent sur une cible (plus aucun <code>$</code> dans la
+            grille).</li>
+        </ul>
+      </div>
+
+      <h3 class="titre-sous">1.3 Feuille de route du projet</h3>
+
+      <div class="progression-bar">
+        <div class="prog-item actif">1. Présentation</div>
+        <div class="prog-item">2. Classes POO</div>
+        <div class="prog-item">3. SQL / BDD</div>
+        <div class="prog-item">4. Graphes</div>
+        <div class="prog-item">5. Tkinter</div>
+        <div class="prog-item">6. Synthèse</div>
+      </div>
+
+      <p>Tu vas construire ce jeu en plusieurs couches, du plus simple au plus ambitieux. Chaque partie ajoute une
+        brique — et à la fin, tu auras un vrai jeu jouable avec une interface graphique et une base de données des
+        scores.</p>
+
+      <div class="encadre-conseil">
+        <span class="encadre-prefix">Compétences mobilisées (programme Terminale NSI)</span>
+        <div class="bo-grid">
+          <div class="bo-item"><span class="bo-titre">Récursivité</span><span class="bo-detail">Pile d'appels, cas de
+              base, terminaison</span></div>
+          <div class="bo-item"><span class="bo-titre">POO + héritage</span><span class="bo-detail">Classes, attributs,
+              méthodes, sous-classes</span></div>
+          <div class="bo-item"><span class="bo-titre">Structures</span><span class="bo-detail">Pile (LIFO), File (FIFO),
+              usage en algorithmes</span></div>
+          <div class="bo-item"><span class="bo-titre">Graphes</span><span class="bo-detail">Modélisation, BFS, DFS,
+              représentation</span></div>
+          <div class="bo-item"><span class="bo-titre">Prog. dynamique</span><span class="bo-detail">Mémoïsation,
+              sous-problèmes, optimalité</span></div>
+          <div class="bo-item"><span class="bo-titre">SQL</span><span class="bo-detail">SELECT JOIN, INSERT, UPDATE,
+              DELETE</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 2 — CLASSES POO
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie2">
+      <h2 class="titre-partie">2. Les classes Python du Sokoban</h2>
+
+      <p>Avant de coder, arrêtons-nous une seconde. Dans un entrepôt réel, tu as des <em>objets bien distincts</em> : le
+        plan de la salle, les caisses, le magasinier, les emplacements marqués au sol. En Python, on modélise chacun par
+        une <strong>classe</strong>. C'est le principe fondamental de la programmation orientée objet.</p>
+
+      <h3 class="titre-sous">2.1 La classe <code>Niveau</code></h3>
+
+      <p>Le niveau est le plan de l'entrepôt. Il contient la grille (une liste de listes de caractères), les dimensions,
+        et la liste des positions cibles.</p>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Classe, constructeur, attributs</span>
+        <p>En Python, une classe se définit avec <code>class</code>. Le constructeur <code>__init__</code> est appelé à
+          la création de l'objet. <code>self</code> désigne l'instance courante. Un <strong>attribut</strong> est une
+          variable propre à l'objet : <code>self.grille</code>, <code>self.nb_lignes</code>…</p>
+
+        <pre><code>class Niveau:
+    def __init__(self, grille_texte):
+        # grille_texte : liste de chaînes de caractères
+        self.grille    = [list(ligne) for ligne in grille_texte]
+        self.nb_lignes = len(self.grille)
+        self.nb_cols   = max(len(r) for r in self.grille)
+        self.cibles    = self._trouver_cibles()
+
+    def _trouver_cibles(self):
+        """Retourne la liste des positions (ligne, col) des cibles."""
+        positions = []
+        for l in range(self.nb_lignes):
+            for c in range(len(self.grille[l])):
+                if self.grille[l][c] in ('.', '*', '+'):
+                    positions.append((l, c))
+        return positions</code></pre>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 2.1 — Méthode <code>afficher()</code>
+        <span class="badge-diff diff-base">Débutant</span>
+      </h4>
+
+      <div class="encadre-indice">
+        <span class="encadre-prefix">Mise en situation</span>
+        <p>Pour tester le jeu en console, tu as besoin d'afficher la grille lisiblement. La méthode
+          <code>afficher()</code> parcourt chaque ligne de la grille et affiche le symbole correspondant côte à côte.
+          Complète-la jusqu'à ce que les tests passent.</p>
+      </div>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-21-1')"> Indice 1</button>
+      <button class="btn-secondaire" onclick="toggleBloc('ind-21-2')"> Indice 2</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-21-1">
+        <span class="encadre-prefix">Indice 1</span>
+        <p>Crée un dictionnaire de correspondance :
+          <code>SYMBOLES = {'#': '🧱', ' ': '⬛', '.': '🎯', '$': '📦', '*': '✅', '@': '🧑', '+': '🕹️'}</code>. Pour
+          chaque cellule, affiche <code>SYMBOLES.get(cellule, '?')</code>.</p>
+      </div>
+      <div class="bloc-cache encadre-indice" id="ind-21-2">
+        <span class="encadre-prefix">Indice 2</span>
+        <p>Pour ne pas sauter de ligne entre les cellules : <code>print(symbole, end='')</code>. Après chaque ligne
+          complète, un <code>print()</code> seul passe à la ligne suivante.</p>
+      </div>
+
+      <script type="py-editor" env="exo21">
+SYMBOLES = {
+    '#': '🧱', ' ': '⬛', '.': '🎯',
+    '$': '📦', '*': '✅', '@': '🧑', '+': '🕹️'
+}
+
+class Niveau:
+    def __init__(self, grille_texte):
+        self.grille    = [list(ligne) for ligne in grille_texte]
+        self.nb_lignes = len(self.grille)
+        self.nb_cols   = max(len(r) for r in self.grille)
+        self.cibles    = self._trouver_cibles()
+
+    def _trouver_cibles(self):
+        positions = []
+        for l in range(self.nb_lignes):
+            for c in range(len(self.grille[l])):
+                if self.grille[l][c] in ('.', '*', '+'):
+                    positions.append((l, c))
+        return positions
+
+    def afficher(self):
+        # À toi de jouer !
+        # Parcours self.grille ligne par ligne,
+        # cellule par cellule, et affiche les symboles.
+        pass
+
+def test_niveau():
+    g = ["#####", "#@$.#", "#####"]
+    n = Niveau(g)
+    assert n.nb_lignes == 3
+    assert n.nb_cols   == 5
+    assert n.cibles    == [(1, 3)]
+    print("Les tests sont validés.")
+
+test_niveau()
+  </script>
+
+      <h3 class="titre-sous">2.2 La classe <code>Joueur</code> et la méthode <code>deplacer()</code></h3>
+
+      <p>Le joueur mémorise sa position (ligne, colonne) et le nombre de coups joués. La méthode <code>deplacer()</code>
+        contient toute la logique de mouvement : déplacement simple, pousse de caisse, collision avec un mur.</p>
+
+      <h4 class="titre-exo">
+        Exercice 2.2 — Méthode <code>deplacer(direction, niveau)</code>
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-22-1')"> Indice 1</button>
+      <button class="btn-secondaire" onclick="toggleBloc('ind-22-2')"> Indice 2</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-22-1">
+        <span class="encadre-prefix">Indice 1 — Vecteur de direction</span>
+        <p>Définis : <code>VECTEURS = {'H': (-1,0), 'B': (1,0), 'G': (0,-1), 'D': (0,1)}</code>. La nouvelle position
+          candidate est <code>(self.ligne + dl, self.col + dc)</code>.</p>
+      </div>
+      <div class="bloc-cache encadre-indice" id="ind-22-2">
+        <span class="encadre-prefix">Indice 2 — Mise à jour des cases</span>
+        <p>Quand le joueur <em>quitte</em> une case : remets <code>'.'</code> si c'était une cible (<code>'+'</code>),
+          sinon <code>' '</code>. Quand il <em>arrive</em> : mets <code>'+'</code> si la case est une cible, sinon
+          <code>'@'</code>. Même logique pour la caisse poussée.</p>
+      </div>
+
+      <script type="py-editor" env="exo22">
+VECTEURS = {'H': (-1, 0), 'B': (1, 0), 'G': (0, -1), 'D': (0, 1)}
+
+class Joueur:
+    def __init__(self, ligne, col):
+        self.ligne    = ligne
+        self.col      = col
+        self.nb_coups = 0
+
+    def deplacer(self, direction, niveau):
+        """Tente de déplacer le joueur. Retourne True si OK, False sinon."""
+        # Étape 1 : calcule la nouvelle position (nl, nc)
+        # Étape 2 : si mur → return False
+        # Étape 3 : si caisse → vérifie la case derrière, déplace la caisse
+        # Étape 4 : met à jour la grille et la position du joueur
+        pass
+
+def test_joueur():
+    class Nvl:
+        def __init__(self, gt):
+            self.grille = [list(l) for l in gt]
+    n = Nvl(["#####", "#@$.#", "#####"])
+    j = Joueur(1, 1)
+    j.deplacer('D', n)
+    assert n.grille[1][2] == '@'
+    assert n.grille[1][3] == '*'
+    assert n.grille[1][1] == ' '
+    j.deplacer('H', n)   # mur au-dessus
+    assert j.nb_coups == 1
+    assert j.ligne == 1
+    print("Les tests sont validés.")
+
+test_joueur()
+  </script>
+
+      <h3 class="titre-sous">2.3 La classe <code>Partie</code></h3>
+
+      <h4 class="titre-exo">
+        Exercice 2.3 — Méthode <code>est_gagne()</code>
+        <span class="badge-diff diff-base">Débutant</span>
+      </h4>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-23-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-23-1">
+        <span class="encadre-prefix">Indice</span>
+        <p>La partie est gagnée si et seulement si aucun <code>'$'</code> ne subsiste dans la grille. Parcours toutes
+          les cellules et retourne <code>False</code> dès que tu en trouves un.</p>
+      </div>
+
+      <script type="py-editor" env="exo23">
+class Partie:
+    def __init__(self, niveau, joueur):
+        self.niveau = niveau
+        self.joueur = joueur
+
+    def est_gagne(self):
+        """Retourne True si toutes les caisses sont sur des cibles."""
+        pass
+
+def test_est_gagne():
+    class N:
+        def __init__(self, g): self.grille = [list(l) for l in g]
+    class J: pass
+    p1 = Partie(N(["#####", "#@*.#", "#####"]), J())
+    assert p1.est_gagne() == False
+    p2 = Partie(N(["#####", "#@**#", "#####"]), J())
+    assert p2.est_gagne() == True
+    p3 = Partie(N(["#####", "#@$*#", "#####"]), J())
+    assert p3.est_gagne() == False
+    print("Les tests sont validés.")
+
+test_est_gagne()
+  </script>
+
+      <h3 class="titre-sous">2.4 Héritage : <code>NiveauChrono</code></h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Héritage et spécialisation</span>
+        <p>L'<strong>héritage</strong> permet à une classe « fille » de réutiliser et d'enrichir une classe « mère ». La
+          classe fille hérite automatiquement de tous les attributs et méthodes de la mère. Elle peut en ajouter de
+          nouveaux, ou en <em>redéfinir</em> (surcharger) certains.</p>
+        <pre><code>class Animal:
+    def __init__(self, nom):
+        self.nom = nom
+    def crier(self):
+        return "..."
+
+class Chien(Animal):          # Chien hérite de Animal
+    def crier(self):          # surcharge de la méthode
+        return "Ouaf !"
+
+rex = Chien("Rex")
+print(rex.nom)    # "Rex"    → hérité de Animal
+print(rex.crier())# "Ouaf !" → redéfini dans Chien</code></pre>
+        <p>En Sokoban, on peut créer <code>NiveauChrono</code> qui hérite de <code>Niveau</code> et ajoute un
+          chronomètre.</p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 2.4 — Classe <code>NiveauChrono(Niveau)</code>
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <p>Crée une classe <code>NiveauChrono</code> qui hérite de <code>Niveau</code> et ajoute :</p>
+      <ul>
+        <li>un attribut <code>self.temps_limite</code> (en secondes) initialisé à la construction,</li>
+        <li>une méthode <code>est_expire(temps_ecoule)</code> qui retourne <code>True</code> si le temps est dépassé.
+        </li>
+      </ul>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-24-1')"> Indice héritage</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-24-1">
+        <span class="encadre-prefix">Indice</span>
+        <p>La syntaxe est <code>class NiveauChrono(Niveau):</code>. Dans <code>__init__</code>, appelle d'abord le
+          constructeur parent avec <code>super().__init__(grille_texte)</code>, puis initialise
+          <code>self.temps_limite</code>.</p>
+      </div>
+
+      <script type="py-editor" env="exo24">
+class Niveau:
+    def __init__(self, grille_texte):
+        self.grille    = [list(ligne) for ligne in grille_texte]
+        self.nb_lignes = len(self.grille)
+        self.nb_cols   = max(len(r) for r in self.grille)
+        self.cibles    = [(l, c)
+                          for l in range(self.nb_lignes)
+                          for c in range(len(self.grille[l]))
+                          if self.grille[l][c] in ('.', '*', '+')]
+
+class NiveauChrono(Niveau):
+    def __init__(self, grille_texte, temps_limite):
+        # Appelle le constructeur parent, puis initialise temps_limite
+        pass
+
+    def est_expire(self, temps_ecoule):
+        """Retourne True si temps_ecoule >= temps_limite."""
+        pass
+
+def test_niveau_chrono():
+    g = ["#####", "#@$.#", "#####"]
+    n = NiveauChrono(g, 60)
+    assert n.nb_lignes    == 3          # hérité de Niveau
+    assert n.cibles       == [(1, 3)]   # hérité de Niveau
+    assert n.temps_limite == 60
+    assert n.est_expire(45) == False
+    assert n.est_expire(60) == True
+    assert n.est_expire(80) == True
+    print("Les tests sont validés.")
+
+test_niveau_chrono()
+  </script>
+
+      <h3 class="titre-sous">2.5 Récursivité : compter les caisses placées</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Récursivité et pile d'appels</span>
+        <p>Une fonction <strong>récursive</strong> s'appelle elle-même. Elle comporte toujours :</p>
+        <ul>
+          <li>un <em>cas de base</em> qui arrête la récursion,</li>
+          <li>un <em>appel récursif</em> qui se rapproche du cas de base.</li>
+        </ul>
+        <p>À chaque appel récursif, Python empile un nouveau <em>cadre d'appel</em> sur la <strong>pile
+            d'exécution</strong>. Quand le cas de base est atteint, les cadres se dépilent un à un.</p>
+
+        <div style="display:flex; gap:2rem; align-items:flex-end; flex-wrap:wrap; margin-top:.8rem;">
+          <div>
+            <p style="font-size:.85rem; color:var(--text-muted); margin-bottom:.4rem;">Pile d'appels pour
+              <code>nb_caisses(g, 0)</code></p>
+            <div class="pile-visuelle">
+              <div class="pile-elem sommet">nb_caisses(g, 0) ← sommet</div>
+              <div class="pile-elem">nb_caisses(g, 1)</div>
+              <div class="pile-elem">nb_caisses(g, 2)</div>
+              <div class="pile-fond">fond (cas de base : idx == len(g))</div>
+            </div>
+          </div>
+          <div style="font-size:.9rem; color:var(--text-muted);">
+            <p>Les appels s'empilent (↑) jusqu'au cas de base,<br>puis les résultats se combinent en redescendant (↓).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 2.5 — Fonction récursive <code>nb_caisses_placees(grille, idx)</code>
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <p>Écris une fonction <em>récursive</em> qui compte le nombre de caisses déjà posées sur des cibles (symbole
+        <code>*</code>). Elle reçoit la grille et l'index de la ligne courante.</p>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-25-1')"> Indice 1</button>
+      <button class="btn-secondaire" onclick="toggleBloc('ind-25-2')"> Indice 2</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-25-1">
+        <span class="encadre-prefix">Indice 1 — Structure récursive</span>
+        <p>Cas de base : <code>idx == len(grille)</code> → retourner <code>0</code>. Appel récursif : compter les
+          <code>'*'</code> dans <code>grille[idx]</code>, puis <strong>ajouter</strong> le résultat de l'appel pour
+          <code>idx + 1</code>.</p>
+      </div>
+      <div class="bloc-cache encadre-indice" id="ind-25-2">
+        <span class="encadre-prefix">Indice 2</span>
+        <p>Pour compter les <code>'*'</code> dans une liste : <code>grille[idx].count('*')</code>.</p>
+      </div>
+
+      <script type="py-editor" env="exo25">
+def nb_caisses_placees(grille, idx=0):
+    """Compte récursivement les '*' dans la grille."""
+    # Cas de base : idx hors bornes → 0
+    # Sinon : count('*') sur la ligne courante + appel récursif
+    pass
+
+def test_nb_caisses_placees():
+    g1 = [list("#####"), list("#@*.#"), list("#####")]
+    assert nb_caisses_placees(g1) == 1
+    g2 = [list("#####"), list("#@**#"), list("#####")]
+    assert nb_caisses_placees(g2) == 2
+    g3 = [list("#####"), list("#@$*#"), list("#####")]
+    assert nb_caisses_placees(g3) == 1
+    print("Les tests sont validés.")
+
+test_nb_caisses_placees()
+  </script>
+
+      <h3 class="titre-sous">2.6 Challenge — Historique des coups avec une <strong>pile</strong></h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — La structure pile (LIFO)</span>
+        <p>Une <strong>pile</strong> (en anglais <em>stack</em>) fonctionne comme une pile d'assiettes : on ajoute et on
+          retire toujours par le dessus. C'est le principe LIFO — <em>Last In, First Out</em>. En Python, une liste
+          suffit :</p>
+        <pre><code>pile = []
+pile.append("état_1")   # empiler
+pile.append("état_2")   # empiler
+dernier = pile.pop()     # dépiler → "état_2"</code></pre>
+        <p>Dans un Sokoban, on stocke l'état de la grille avant chaque coup. Pour annuler, on dépile le dernier état.
+        </p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 2.6 — <code>Historique</code> : empiler et dépiler les états
+        <span class="badge-diff diff-avance">Avancé</span>
+      </h4>
+
+      <p>Implémente la classe <code>Historique</code> avec :</p>
+      <ul>
+        <li><code>empiler(etat)</code> : sauvegarde une copie profonde de la grille,</li>
+        <li><code>depiler()</code> : retourne le dernier état sauvegardé (ou <code>None</code> si vide),</li>
+        <li><code>est_vide()</code> : retourne <code>True</code> si l'historique est vide.</li>
+      </ul>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-26-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-26-1">
+        <span class="encadre-prefix">Indice — Copie profonde</span>
+        <p>Pour sauvegarder l'état de la grille sans qu'il soit modifié par la suite, utilise
+          <code>import copy; copy.deepcopy(grille)</code>. Une simple affectation copie la référence, pas le contenu.
+        </p>
+      </div>
+
+      <script type="py-editor" env="exo26">
+import copy
+
+class Historique:
+    def __init__(self):
+        self._pile = []
+
+    def empiler(self, etat):
+        """Sauvegarde une copie profonde de etat."""
+        pass
+
+    def depiler(self):
+        """Retourne le dernier état (ou None si vide)."""
+        pass
+
+    def est_vide(self):
+        pass
+
+def test_historique():
+    h = Historique()
+    assert h.est_vide() == True
+    grille1 = [list("#####"), list("#@$.#"), list("#####")]
+    h.empiler(grille1)
+    grille1[1][1] = ' '   # modification volontaire
+    etat = h.depiler()
+    assert etat[1][1] == '@'   # la copie est intacte
+    assert h.est_vide() == True
+    assert h.depiler() is None
+    print("Les tests sont validés.")
+
+test_historique()
+  </script>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 3 — BASE DE DONNÉES
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie3">
+      <h2 class="titre-partie">3. Base de données — Joueurs et scores</h2>
+
+      <p>Le jeu fonctionne. Mais comment garder la trace des scores entre deux sessions ? Comment trouver le meilleur
+        score d'Alice sur le niveau 3 ? La réponse : une <strong>base de données relationnelle</strong> SQLite.</p>
+
+      <h3 class="titre-sous">3.1 Modélisation — Le schéma relationnel</h3>
+
+      <p>On a trois types d'entités à stocker. Voici le schéma :</p>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Schéma relationnel</span>
+        <ul>
+          <li><strong>Joueurs</strong>(<u>id_joueur</u>, pseudo, date_inscription)</li>
+          <li><strong>Niveaux</strong>(<u>id_niveau</u>, nom, difficulte, grille_texte)</li>
+          <li><strong>Parties</strong>(<u>id_partie</u>, #id_joueur, #id_niveau, nb_coups, date_partie, victoire)</li>
+        </ul>
+        <p style="margin-top:.6rem;">Les clés étrangères (<code>#</code>) créent les liens entre tables. Une
+          <code>Partie</code> appartient à un <code>Joueur</code> et correspond à un <code>Niveau</code>.</p>
+      </div>
+
+      <h3 class="titre-sous">3.2 Création des tables</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — SQLite avec Python</span>
+        <p>Le module <code>sqlite3</code> est intégré à Python. On crée une connexion, on obtient un curseur, on exécute
+          des requêtes SQL, et on valide avec <code>commit()</code>. En mémoire : <code>":memory:"</code>.</p>
+        <pre><code>import sqlite3
+conn   = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+cursor.execute("CREATE TABLE ...")
+conn.commit()</code></pre>
+        <p>Pour éviter les injections SQL, toujours utiliser les paramètres positionnels :
+          <code>cursor.execute("... WHERE pseudo=?", (valeur,))</code>.</p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 3.1 — <code>CREATE TABLE</code> pour les trois tables
+        <span class="badge-diff diff-base">Débutant</span>
+      </h4>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-31-1')"> Indice clés étrangères</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-31-1">
+        <span class="encadre-prefix">Indice — Clé étrangère SQLite</span>
+        <p>Active d'abord les contraintes : <code>cursor.execute("PRAGMA foreign_keys = ON")</code>. Puis dans la table
+          <code>Parties</code> : <code>FOREIGN KEY (id_joueur) REFERENCES Joueurs(id_joueur)</code>.</p>
+      </div>
+
+      <script type="py-editor" env="exo31">
+import sqlite3
+
+def creer_base():
+    conn = sqlite3.connect(":memory:")
+    c    = conn.cursor()
+    c.execute("PRAGMA foreign_keys = ON")
+    # Crée ici les trois tables : Joueurs, Niveaux, Parties
+    conn.commit()
+    return conn
+
+def test_creer_base():
+    conn = creer_base()
+    c    = conn.cursor()
+    c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = {row[0] for row in c.fetchall()}
+    assert 'Joueurs'  in tables
+    assert 'Niveaux'  in tables
+    assert 'Parties'  in tables
+    print("Les tests sont validés.")
+
+test_creer_base()
+  </script>
+
+      <h4 class="titre-exo">
+        Exercice 3.2 — INSERT, SELECT avec JOIN, UPDATE, DELETE
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <p>Implémente quatre fonctions couvrant les opérations fondamentales du SQL :</p>
+      <ol>
+        <li><code>inserer_joueur(conn, pseudo)</code> — INSERT</li>
+        <li><code>meilleur_score(conn, pseudo, id_niveau)</code> — SELECT + JOIN</li>
+        <li><code>mettre_a_jour_pseudo(conn, ancien, nouveau)</code> — UPDATE</li>
+        <li><code>supprimer_joueur(conn, pseudo)</code> — DELETE</li>
+      </ol>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-32-1')"> Indice JOIN</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-32-1">
+        <span class="encadre-prefix">Indice — Jointure SQL</span>
+        <p>Pour relier Parties et Joueurs :<br>
+          <code>SELECT MIN(p.nb_coups) FROM Parties p JOIN Joueurs j ON j.id_joueur = p.id_joueur WHERE j.pseudo=? AND p.id_niveau=? AND p.victoire=1</code>
+        </p>
+      </div>
+
+      <script type="py-editor" env="exo32">
+import sqlite3
+
+def creer_base():
+    conn = sqlite3.connect(":memory:")
+    c    = conn.cursor()
+    c.execute("PRAGMA foreign_keys = ON")
+    c.execute("""CREATE TABLE Joueurs (
+        id_joueur INTEGER PRIMARY KEY AUTOINCREMENT,
+        pseudo TEXT NOT NULL UNIQUE,
+        date_inscription TEXT DEFAULT (date('now')))""")
+    c.execute("""CREATE TABLE Niveaux (
+        id_niveau INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom TEXT NOT NULL, difficulte INTEGER DEFAULT 1,
+        grille_texte TEXT NOT NULL)""")
+    c.execute("""CREATE TABLE Parties (
+        id_partie INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_joueur INTEGER NOT NULL, id_niveau INTEGER NOT NULL,
+        nb_coups INTEGER DEFAULT 0,
+        date_partie TEXT DEFAULT (date('now')),
+        victoire INTEGER DEFAULT 0,
+        FOREIGN KEY (id_joueur) REFERENCES Joueurs(id_joueur),
+        FOREIGN KEY (id_niveau) REFERENCES Niveaux(id_niveau))""")
+    conn.commit()
+    return conn
+
+def inserer_joueur(conn, pseudo):
+    # INSERT INTO Joueurs (pseudo) VALUES (?)
+    pass
+
+def meilleur_score(conn, pseudo, id_niveau):
+    # SELECT MIN(nb_coups) avec JOIN
+    pass
+
+def mettre_a_jour_pseudo(conn, ancien, nouveau):
+    # UPDATE Joueurs SET pseudo=? WHERE pseudo=?
+    pass
+
+def supprimer_joueur(conn, pseudo):
+    # DELETE FROM Joueurs WHERE pseudo=?
+    pass
+
+def test_sql():
+    conn = creer_base()
+    inserer_joueur(conn, "Alice")
+    c = conn.cursor()
+    c.execute("INSERT INTO Niveaux (nom, grille_texte) VALUES ('N1','#@$.')")
+    conn.commit()
+    c.execute("SELECT id_joueur FROM Joueurs WHERE pseudo='Alice'")
+    id_j = c.fetchone()[0]
+    c.execute("INSERT INTO Parties (id_joueur, id_niveau, nb_coups, victoire) VALUES (?,1,12,1)", (id_j,))
+    conn.commit()
+    assert meilleur_score(conn, "Alice", 1) == 12
+    mettre_a_jour_pseudo(conn, "Alice", "Alicia")
+    c.execute("SELECT pseudo FROM Joueurs WHERE id_joueur=?", (id_j,))
+    assert c.fetchone()[0] == "Alicia"
+    supprimer_joueur(conn, "Alicia")
+    c.execute("SELECT COUNT(*) FROM Joueurs")
+    assert c.fetchone()[0] == 0
+    print("Les tests sont validés.")
+
+test_sql()
+  </script>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 4 — GAMEPLAY / GRAPHES
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie4">
+      <h2 class="titre-partie">4. Le gameplay — Graphes et algorithmes de parcours</h2>
+
+      <p>Est-ce que le joueur peut atteindre la case (3, 5) depuis sa position actuelle ? Existe-t-il un chemin pour
+        pousser une caisse jusqu'à sa cible ? Pour répondre à ces questions, on va voir le plateau comme un
+        <strong>graphe</strong>.</p>
+
+      <h3 class="titre-sous">4.1 Le plateau modélisé comme un graphe</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Graphe : sommets, arêtes, représentation</span>
+        <p>Un <strong>graphe</strong> est un ensemble de <em>sommets</em> reliés par des <em>arêtes</em>. Dans notre
+          Sokoban :</p>
+        <ul>
+          <li>chaque case libre est un <strong>sommet</strong>,</li>
+          <li>deux cases adjacentes accessibles sont reliées par une <strong>arête</strong>.</li>
+        </ul>
+        <p>On peut représenter ce graphe sous forme d'une <strong>liste d'adjacence</strong> : un dictionnaire où chaque
+          clé est un sommet et la valeur est la liste de ses voisins.</p>
+        <pre><code>graphe = {
+    (1,1): [(1,2), (2,1)],
+    (1,2): [(1,1), (1,3)],
+    ...
+}</code></pre>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 4.1 — Fonction <code>voisins(grille, ligne, col)</code>
+        <span class="badge-diff diff-base">Débutant</span>
+      </h4>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-41-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-41-1">
+        <span class="encadre-prefix">Indice</span>
+        <p>Parcours <code>[(-1,0),(1,0),(0,-1),(0,1)]</code>. Pour chaque direction, calcule <code>(nl, nc)</code> et
+          vérifie : dans les bornes ET <code>grille[nl][nc] != '#'</code>.</p>
+      </div>
+
+      <script type="py-editor" env="exo41">
+def voisins(grille, ligne, col):
+    """Retourne la liste des cases adjacentes non-mur."""
+    pass
+
+def test_voisins():
+    g = [list("####"), list("# @#"), list("####")]
+    v = voisins(g, 1, 2)
+    assert (1, 1) in v
+    assert (0, 2) not in v
+    assert len(v) == 1
+    g2 = [list("#####"), list("#   #"), list("#   #"), list("#####")]
+    assert len(voisins(g2, 1, 2)) == 3
+    print("Les tests sont validés.")
+
+test_voisins()
+  </script>
+
+      <h3 class="titre-sous">4.2 Parcours en largeur — BFS</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — BFS avec une file (FIFO)</span>
+        <p>Le <strong>parcours en largeur</strong> (BFS — <em>Breadth First Search</em>) explore le graphe couche par
+          couche, en commençant par les voisins les plus proches. Il utilise une <strong>file</strong> (FIFO — <em>First
+            In, First Out</em>) :</p>
+        <pre><code>from collections import deque
+file = deque([depart])   # initialise avec le sommet de départ
+while file:
+    sommet = file.popleft()  # dépile par la gauche
+    for v in voisins(...):
+        if v not in visite:
+            file.append(v)   # empile à droite</code></pre>
+        <p>Le BFS garantit de trouver le chemin le plus court dans un graphe non pondéré.</p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 4.2 — <code>bfs_accessible(grille, depart, cible)</code>
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-42-1')"> Indice 1</button>
+      <button class="btn-secondaire" onclick="toggleBloc('ind-42-2')"> Indice 2</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-42-1">
+        <span class="encadre-prefix">Indice 1 — Structure</span>
+        <p>Initialise : <code>visite = {depart}</code> et <code>file = deque([depart])</code>. À chaque étape, dépile un
+          sommet, parcours ses voisins. Si un voisin == cible → retourne <code>True</code>. S'il n'est pas visité,
+          l'ajouter dans la file et dans <code>visite</code>.</p>
+      </div>
+      <div class="bloc-cache encadre-indice" id="ind-42-2">
+        <span class="encadre-prefix">Indice 2 — Cas particulier</span>
+        <p>N'oublie pas le cas <code>depart == cible</code> → retourner <code>True</code> immédiatement.</p>
+      </div>
+
+      <script type="py-editor" env="exo42">
+from collections import deque
+
+def voisins(grille, ligne, col):
+    directions = [(-1,0),(1,0),(0,-1),(0,1)]
+    res = []
+    for dl, dc in directions:
+        nl, nc = ligne + dl, col + dc
+        if 0 <= nl < len(grille) and 0 <= nc < len(grille[nl]):
+            if grille[nl][nc] != '#':
+                res.append((nl, nc))
+    return res
+
+def bfs_accessible(grille, depart, cible):
+    """Retourne True si cible est atteignable depuis depart (BFS)."""
+    pass
+
+def test_bfs():
+    g = [list("#####"), list("#   #"), list("##  #"), list("#####")]
+    assert bfs_accessible(g, (1,1), (2,3)) == True
+    assert bfs_accessible(g, (1,1), (3,3)) == False
+    assert bfs_accessible(g, (1,2), (1,2)) == True
+    print("Les tests sont validés.")
+
+test_bfs()
+  </script>
+
+      <h3 class="titre-sous">4.3 Parcours en profondeur — DFS</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — DFS avec une pile ou récursivité</span>
+        <p>Le <strong>parcours en profondeur</strong> (DFS — <em>Depth First Search</em>) s'enfonce dans le graphe le
+          plus loin possible avant de revenir en arrière. On peut l'implémenter :</p>
+        <ul>
+          <li>avec une <strong>pile explicite</strong> (version itérative),</li>
+          <li>ou de façon <strong>récursive</strong> (la pile d'appels joue le rôle de la pile).</li>
+        </ul>
+        <pre><code># Version itérative avec pile
+def dfs(grille, depart):
+    visite = set()
+    pile   = [depart]
+    while pile:
+        pos = pile.pop()   # dépile par le dessus (LIFO)
+        if pos in visite: continue
+        visite.add(pos)
+        for v in voisins(grille, pos[0], pos[1]):
+            if v not in visite:
+                pile.append(v)
+    return visite</code></pre>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 4.3 — <code>dfs_composantes(grille)</code> : zones accessibles
+        <span class="badge-diff diff-avance">Avancé</span>
+      </h4>
+
+      <p>Écris la fonction <code>dfs_composantes(grille)</code> qui retourne le nombre de <em>composantes connexes</em>
+        (zones accessibles séparées) dans le plateau. On ignore les murs.</p>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-43-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-43-1">
+        <span class="encadre-prefix">Indice — Composantes connexes</span>
+        <p>Itère sur toutes les cases non-mur. Si une case n'est pas encore visitée, lance un DFS depuis cette case —
+          tout ce qu'il visite forme une composante connexe. Incrémente un compteur à chaque nouveau DFS lancé.</p>
+      </div>
+
+      <script type="py-editor" env="exo43">
+def voisins(grille, ligne, col):
+    directions = [(-1,0),(1,0),(0,-1),(0,1)]
+    res = []
+    for dl, dc in directions:
+        nl, nc = ligne + dl, col + dc
+        if 0 <= nl < len(grille) and 0 <= nc < len(grille[nl]):
+            if grille[nl][nc] != '#':
+                res.append((nl, nc))
+    return res
+
+def dfs_composantes(grille):
+    """Retourne le nombre de composantes connexes (zones accessibles)."""
+    pass
+
+def test_composantes():
+    # Plateau avec 1 seule zone
+    g1 = [list("#####"), list("#   #"), list("#   #"), list("#####")]
+    assert dfs_composantes(g1) == 1
+    # Plateau avec 2 zones séparées par un mur
+    g2 = [list("#####"), list("#  ##"), list("##  #"), list("#####")]
+    assert dfs_composantes(g2) == 2
+    # Plateau vide (tout en murs)
+    g3 = [list("###"), list("###")]
+    assert dfs_composantes(g3) == 0
+    print("Les tests sont validés.")
+
+test_composantes()
+  </script>
+
+      <h3 class="titre-sous">4.4 Programmation dynamique — Distance optimale</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Programmation dynamique et mémoïsation</span>
+        <p>La <strong>programmation dynamique</strong> consiste à décomposer un problème en sous-problèmes, les résoudre
+          une seule fois, et mémoriser les résultats dans un <em>cache</em> pour ne pas les recalculer. C'est la
+          <strong>mémoïsation</strong>.</p>
+        <p>Exemple classique — <strong>rendu de monnaie</strong> :<br>
+          Pour rendre 6€ avec des pièces de [1, 2, 5], quelle est le nombre minimal de pièces ?</p>
+        <pre><code>cache = {}
+
+def rendu(somme, pieces):
+    if somme == 0: return 0
+    if somme in cache: return cache[somme]  # déjà calculé !
+    mini = float('inf')
+    for p in pieces:
+        if p <= somme:
+            mini = min(mini, 1 + rendu(somme - p, pieces))
+    cache[somme] = mini
+    return mini
+
+# rendu(6, [1,2,5]) = 2  (5+1)</code></pre>
+        <p>En Sokoban, la distance minimale entre deux cases se calcule de même façon : on mémorise les distances déjà
+          calculées dans un dictionnaire.</p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 4.4 — <code>distances_bfs(grille, depart)</code>
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <p>Écris la fonction qui retourne un dictionnaire <code>{position: distance_minimale}</code> depuis
+        <code>depart</code> vers toutes les cases accessibles. C'est une forme de programmation dynamique : la distance
+        de chaque case est calculée exactement une fois et mise en cache.</p>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-44-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-44-1">
+        <span class="encadre-prefix">Indice</span>
+        <p>Modifie le BFS pour stocker la distance : <code>dist = {depart: 0}</code>. Pour chaque voisin <code>v</code>
+          non encore visité : <code>dist[v] = dist[pos] + 1</code>. La file contient les positions à explorer.</p>
+      </div>
+
+      <script type="py-editor" env="exo44">
+from collections import deque
+
+def voisins(grille, ligne, col):
+    directions = [(-1,0),(1,0),(0,-1),(0,1)]
+    res = []
+    for dl, dc in directions:
+        nl, nc = ligne + dl, col + dc
+        if 0 <= nl < len(grille) and 0 <= nc < len(grille[nl]):
+            if grille[nl][nc] != '#':
+                res.append((nl, nc))
+    return res
+
+def distances_bfs(grille, depart):
+    """Retourne {position: distance_min_depuis_depart}."""
+    pass
+
+def test_distances():
+    g = [list("#####"), list("#   #"), list("#   #"), list("#####")]
+    d = distances_bfs(g, (1,1))
+    assert d[(1,1)] == 0
+    assert d[(1,3)] == 2
+    assert d[(2,3)] == 3
+    assert (0,1) not in d   # mur inaccessible
+    print("Les tests sont validés.")
+
+test_distances()
+  </script>
+
+      <h3 class="titre-sous">4.5 Simulation de partie — Challenge assemblage</h3>
+
+      <h4 class="titre-exo">
+        Exercice 4.5 — <code>simuler_partie(grille_texte, coups)</code>
+        <span class="badge-diff diff-avance">Avancé</span>
+      </h4>
+
+      <p>Assemble les classes <code>Niveau</code>, <code>Joueur</code> et <code>Partie</code> pour écrire une fonction
+        qui simule une liste de coups et retourne le nombre de coups valides et l'état de victoire.</p>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-45-1')"> Indice</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-45-1">
+        <span class="encadre-prefix">Indice — Trouver la position du joueur</span>
+        <p>La position initiale du joueur se trouve en cherchant le symbole <code>'@'</code> ou <code>'+'</code> dans la
+          grille. Un <code>next(...)</code> avec un générateur fait l'affaire.</p>
+      </div>
+
+      <script type="py-editor" env="exo45">
+VECTEURS = {'H': (-1,0), 'B': (1,0), 'G': (0,-1), 'D': (0,1)}
+
+class Niveau:
+    def __init__(self, gt):
+        self.grille    = [list(l) for l in gt]
+        self.nb_lignes = len(self.grille)
+        self.nb_cols   = max(len(r) for r in self.grille)
+
+class Joueur:
+    def __init__(self, l, c):
+        self.ligne = l; self.col = c; self.nb_coups = 0
+    def deplacer(self, direction, niveau):
+        dl, dc = VECTEURS[direction]; nl, nc = self.ligne+dl, self.col+dc
+        g = niveau.grille
+        if g[nl][nc] == '#': return False
+        if g[nl][nc] in ('$','*'):
+            nl2, nc2 = nl+dl, nc+dc
+            if g[nl2][nc2] == '#' or g[nl2][nc2] in ('$','*'): return False
+            g[nl2][nc2] = '*' if g[nl2][nc2]=='.' else '$'
+            g[nl][nc]   = '+' if g[nl][nc]  =='*' else '@'
+        else:
+            g[nl][nc] = '+' if g[nl][nc]=='.' else '@'
+        g[self.ligne][self.col] = '.' if g[self.ligne][self.col]=='+' else ' '
+        self.ligne, self.col = nl, nc; self.nb_coups += 1; return True
+
+class Partie:
+    def __init__(self, n, j): self.niveau=n; self.joueur=j
+    def est_gagne(self):
+        for ligne in self.niveau.grille:
+            if '$' in ligne: return False
+        return True
+
+def simuler_partie(grille_texte, coups):
+    """Applique la liste de coups, retourne (nb_coups_valides, est_gagne)."""
+    pass
+
+def test_simuler():
+    g = ["#####", "#@$.#", "#####"]
+    nb, gagne = simuler_partie(g, ['D'])
+    assert nb    == 1
+    assert gagne == True
+    nb2, g2 = simuler_partie(g, ['H'])
+    assert nb2 == 0
+    assert g2  == False
+    nb3, g3 = simuler_partie(g, ['D', 'G'])
+    assert nb3 == 2
+    assert g3  == False
+    print("Les tests sont validés.")
+
+test_simuler()
+  </script>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 5 — TKINTER
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie5">
+      <h2 class="titre-partie">5. Interface graphique avec Tkinter</h2>
+
+      <div class="encadre-attention">
+        <span class="encadre-prefix">Important — Exécution locale obligatoire</span>
+        <p>Tkinter ne peut pas fonctionner dans le navigateur via PyScript. Cette partie est à coder et tester dans ton
+          éditeur Python sur ta machine (Thonny, VS Code, PyCharm…). Les éditeurs ci-dessous te permettent de travailler
+          la logique en ligne.</p>
+      </div>
+
+      <h3 class="titre-sous">5.1 Fenêtre et Canvas</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Tkinter : fenêtre, Canvas, boucle événementielle</span>
+        <pre><code>import tkinter as tk
+
+fenetre = tk.Tk()
+fenetre.title("Sokoban")
+canvas  = tk.Canvas(fenetre, width=400, height=300, bg="black")
+canvas.pack()
+fenetre.mainloop()   # boucle : attend et traite les événements</code></pre>
+        <p>Le <code>Canvas</code> est la zone de dessin. On y trace des rectangles avec
+          <code>canvas.create_rectangle(x0, y0, x1, y1, fill=...)</code>.</p>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 5.1 — <code>VueSokoban</code> : dessiner la grille
+        <span class="badge-diff diff-inter">Intermédiaire</span>
+      </h4>
+
+      <p>Crée une classe <code>VueSokoban(tk.Canvas)</code> (héritage !) dont la méthode <code>dessiner()</code> affiche
+        toutes les cases de la grille sous forme de rectangles colorés.</p>
+
+      <div class="encadre-indice">
+        <span class="encadre-prefix">Palette de couleurs</span>
+        <table class="tab-cours">
+          <tr>
+            <th>Symbole</th>
+            <th>Couleur</th>
+          </tr>
+          <tr>
+            <td><code>#</code></td>
+            <td><code>#2e3a52</code></td>
+          </tr>
+          <tr>
+            <td><code> </code></td>
+            <td><code>#1a1f2e</code></td>
+          </tr>
+          <tr>
+            <td><code>.</code></td>
+            <td><code>#c9a84c</code></td>
+          </tr>
+          <tr>
+            <td><code>$</code></td>
+            <td><code>#8ca5b4</code></td>
+          </tr>
+          <tr>
+            <td><code>*</code></td>
+            <td><code>#4caf50</code></td>
+          </tr>
+          <tr>
+            <td><code>@</code></td>
+            <td><code>#e07b54</code></td>
+          </tr>
+          <tr>
+            <td><code>+</code></td>
+            <td><code>#e0a050</code></td>
+          </tr>
+        </table>
+      </div>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-51-1')"> Indice coordonnées</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-51-1">
+        <span class="encadre-prefix">Indice</span>
+        <p>Si la taille d'une case est <code>t</code> pixels, la case <code>(l, c)</code> s'affiche de
+          <code>(c*t, l*t)</code> à <code>(c*t+t, l*t+t)</code>. <code>canvas.delete("all")</code> efface tout avant de
+          redessiner.</p>
+      </div>
+
+      <script type="py-editor" env="exo51">
+# Exercice à tester en Python local avec Tkinter.
+# Ci-dessous, la logique de calcul des coordonnées est testable.
+
+COULEURS = {
+    '#': '#2e3a52', ' ': '#1a1f2e', '.': '#c9a84c',
+    '$': '#8ca5b4', '*': '#4caf50', '@': '#e07b54', '+': '#e0a050'
+}
+
+def coordonnees_case(ligne, col, taille):
+    """Retourne (x0, y0, x1, y1) pour la case (ligne, col)."""
+    pass
+
+def test_coordonnees():
+    assert coordonnees_case(0, 0, 64) == (0, 0, 64, 64)
+    assert coordonnees_case(1, 2, 64) == (128, 64, 192, 128)
+    assert coordonnees_case(3, 0, 32) == (0, 96, 32, 128)
+    print("Les tests sont validés.")
+
+test_coordonnees()
+  </script>
+
+      <h3 class="titre-sous">5.2 Gestion du clavier et architecture MVC</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Cours — Événements clavier et architecture MVC</span>
+        <p>En Tkinter : <code>fenetre.bind("&lt;KeyPress&gt;", ma_fonction)</code>. La fonction reçoit un objet
+          <code>event</code> avec <code>event.keysym</code> (nom de la touche : <code>'Up'</code>,
+          <code>'Down'</code>…).</p>
+        <p>L'architecture <strong>MVC</strong> (Modèle-Vue-Contrôleur) sépare :</p>
+        <ul>
+          <li><strong>Modèle</strong> = <code>Niveau</code>, <code>Joueur</code>, <code>Partie</code> (les données et
+            règles),</li>
+          <li><strong>Vue</strong> = <code>VueSokoban</code> (l'affichage),</li>
+          <li><strong>Contrôleur</strong> = <code>AppSokoban</code> (la liaison clavier → modèle → vue).</li>
+        </ul>
+      </div>
+
+      <h4 class="titre-exo">
+        Exercice 5.2 — <code>AppSokoban</code> : application complète
+        <span class="badge-diff diff-avance">Avancé</span>
+      </h4>
+
+      <p>Assemble l'application complète :</p>
+      <ol>
+        <li><code>AppSokoban(tk.Tk)</code> charge un niveau, crée la vue, lie le clavier.</li>
+        <li>Les touches ↑↓←→ et Z/S/Q/D déplacent le joueur.</li>
+        <li>Le titre de fenêtre affiche le nombre de coups.</li>
+        <li>Un message de victoire s'affiche quand la partie est gagnée.</li>
+      </ol>
+
+      <button class="btn-secondaire" onclick="toggleBloc('ind-52-1')"> Indice MVC</button>
+      <button class="btn-secondaire" onclick="toggleBloc('ind-52-2')"> Indice trouver le joueur</button>
+
+      <div class="bloc-cache encadre-indice" id="ind-52-1">
+        <span class="encadre-prefix">Indice — Architecture MVC</span>
+        <p><code>on_touche(event)</code> : récupère la direction, appelle <code>joueur.deplacer()</code> (modèle), puis
+          <code>vue.dessiner()</code> (vue), puis met à jour le titre. C'est le contrôleur qui orchestre.</p>
+      </div>
+      <div class="bloc-cache encadre-indice" id="ind-52-2">
+        <span class="encadre-prefix">Indice — Position initiale du joueur</span>
+        <p><code>next((l,c) for l,ligne in enumerate(grille) for c,cell in enumerate(ligne) if cell in ('@','+'))</code>
+        </p>
+      </div>
+
+      <script type="py-editor" env="exo52">
+# Teste ici la logique de mappage clavier → direction
+TOUCHES = {
+    'Up': 'H', 'Down': 'B', 'Left': 'G', 'Right': 'D',
+    'z':  'H', 's':    'B', 'q':   'G', 'd':    'D'
+}
+
+def direction_depuis_touche(keysym):
+    return TOUCHES.get(keysym)
+
+def test_touches():
+    assert direction_depuis_touche('Up')    == 'H'
+    assert direction_depuis_touche('Left')  == 'G'
+    assert direction_depuis_touche('z')     == 'H'
+    assert direction_depuis_touche('Esc')   is None
+    print("Les tests sont validés.")
+
+test_touches()
+  </script>
+
+      <h3 class="titre-sous">5.3 Challenge final — Intégration BDD dans l'interface</h3>
+
+      <div class="encadre-conseil">
+        <span class="encadre-prefix">Challenge avancé — Sauvegarde du score à la victoire</span>
+        <p>À la fin d'une partie gagnée, l'application doit :</p>
+        <ol>
+          <li>Demander le pseudo du joueur via <code>tk.simpledialog.askstring()</code>.</li>
+          <li>Insérer le joueur s'il n'existe pas : <code>INSERT OR IGNORE INTO Joueurs ...</code></li>
+          <li>Enregistrer la partie dans <code>Parties</code> avec le nombre de coups.</li>
+          <li>Afficher le meilleur score du joueur sur ce niveau.</li>
+        </ol>
+
+        <pre><code>import tkinter as tk
+from tkinter import simpledialog, messagebox
+
+# Dans on_touche(), après victoire :
+# pseudo = simpledialog.askstring("Sokoban", "Ton pseudo :")
+# if pseudo:
+#     meilleur = sauvegarder_score(conn, pseudo, id_niveau, joueur.nb_coups)
+#     messagebox.showinfo("Bravo !",
+#         f"Gagné en {joueur.nb_coups} coups !\nTon record sur ce niveau : {meilleur}")</code></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PARTIE 6 — SYNTHÈSE
+═══════════════════════════════════════════════════════ -->
+    <section class="partie" id="partie6">
+      <h2 class="titre-partie">6. Synthèse et bilan du projet</h2>
+
+      <p>Tu arrives à la fin de ce projet. Prends un moment pour faire le point sur tout ce que tu as construit et les
+        notions du programme que tu as mobilisées.</p>
+
+      <div class="recap-grid">
+        <div class="recap-card">
+          <div class="rc-titre">Récursivité</div>
+          <ul>
+            <li>Cas de base et appel récursif</li>
+            <li>Pile d'appels (trace d'exécution)</li>
+            <li><code>nb_caisses_placees()</code></li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <div class="rc-titre">POO et héritage</div>
+          <ul>
+            <li>Classes <code>Niveau</code>, <code>Joueur</code>, <code>Partie</code></li>
+            <li>Héritage : <code>NiveauChrono(Niveau)</code></li>
+            <li>Héritage : <code>VueSokoban(tk.Canvas)</code></li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <div class="rc-titre">Structures de données</div>
+          <ul>
+            <li>Pile LIFO — <code>Historique</code></li>
+            <li>File FIFO — BFS avec <code>deque</code></li>
+            <li>Liste d'adjacence — graphe</li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <div class="rc-titre">Graphes</div>
+          <ul>
+            <li>Modélisation plateau → graphe</li>
+            <li>BFS — chemin court, accessibilité</li>
+            <li>DFS — composantes connexes</li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <div class="rc-titre">Prog. dynamique</div>
+          <ul>
+            <li>Mémoïsation (cache)</li>
+            <li>Sous-problèmes optimaux</li>
+            <li>Table de distances BFS</li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <div class="rc-titre">SQL — SQLite</div>
+          <ul>
+            <li>Schéma relationnel</li>
+            <li>SELECT, INSERT, UPDATE, DELETE</li>
+            <li>JOIN entre tables</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="titre-sous">Questions de bilan</h3>
+
+      <div class="encadre">
+        <span class="encadre-prefix">Questions type bac</span>
+        <ol>
+          <li>Quelle est la différence entre une <strong>pile</strong> et une <strong>file</strong> ? Dans ce projet, où
+            utilise-t-on chacune ?</li>
+          <li>Explique pourquoi le BFS garantit le <strong>chemin le plus court</strong>, alors que le DFS ne le
+            garantit pas.</li>
+          <li>Dans la classe <code>NiveauChrono</code>, quel mot-clé Python permet d'appeler le constructeur de la
+            classe parente ?</li>
+          <li>Quelle requête SQL permet de trouver le meilleur score d'un joueur sur un niveau donné ? Écris-la.</li>
+          <li>Que se passe-t-il si l'on oublie le <code>commit()</code> après un <code>INSERT</code> en SQLite ?</li>
+          <li>Donne un exemple de problème qui ne peut <strong>pas</strong> se résoudre par programmation dynamique.
+            Pourquoi ?</li>
+        </ol>
+      </div>
+
+      <div class="encadre-conseil">
+        <span class="encadre-prefix">Pour aller plus loin</span>
+        <ul>
+          <li><strong>Résolution automatique</strong> — implémente l'algorithme A* pour trouver la solution optimale
+            d'un niveau.</li>
+          <li><strong>Éditeur de niveaux</strong> — interface Tkinter pour créer et sauvegarder ses propres niveaux en
+            base.</li>
+          <li><strong>Multijoueur en réseau</strong> — compare les scores de joueurs distants via une API REST.</li>
+          <li><strong>Détection des deadlocks</strong> — identifie les cases « mortes » où une caisse ne pourra plus
+            jamais être poussée sur une cible.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+     FOOTER + BOUTON RETOUR HAUT
+═══════════════════════════════════════════════════════ -->
+  <footer>
+    Lycée Antoine Watteau — DarkSATHI Li
+  </footer>
+
+  <button id="btn-haut" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Retour en haut"
+    style="opacity:0;">↑</button>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ── THÈME ── */
+    function setTheme(t) {
+      document.body.setAttribute('data-theme', t);
+      ['dark', 'light', 'projector'].forEach(n => {
+        document.getElementById('btn-' + n).classList.toggle('actif', n === t);
+      });
+      localStorage.setItem('sokoban-theme', t);
+    }
+    (function () {
+      const saved = localStorage.getItem('sokoban-theme') || 'dark';
+      setTheme(saved);
+    })();
+
+    /* ── BLOCS CACHÉS (indices uniquement) ── */
+    function toggleBloc(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('ouvert');
+    }
+
+    /* ── BOUTON RETOUR HAUT ── */
+    window.addEventListener('scroll', function () {
+      document.getElementById('btn-haut').style.opacity =
+        window.scrollY > 280 ? '1' : '0';
+    });
+  </script>
+
+</body>
+
+</html>

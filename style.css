@@ -30,7 +30,7 @@
       --bg-cours: #eef2ff;
       --bg-conseil: #fffbea;
       --bg-indice: #f0faf1;
-      --bg-code: #1e2538;
+      --bg-code: #a8afc2;
       --nav-bg: #ffffffee;
       --border-col: #c8d0e0;
       --accent: #3a5a8a;
@@ -38,7 +38,7 @@
       --accent-vert: #2e7d32;
       --text-main: #1a1f2e;
       --text-muted: #4a5568;
-      --text-code: #c5e8f5;
+      --text-code: #0a0a0a;
       --cell-mur: #8ca5b4;
       --cell-sol: #e8ecf5;
       --cell-cible: #dce8ff;
@@ -51,7 +51,7 @@
       --bg-cours: #f0f4ff;
       --bg-conseil: #fffde7;
       --bg-indice: #f1fff2;
-      --bg-code: #1a1a2e;
+       --bg-code: #a8afc2;
       --nav-bg: #ffffffee;
       --border-col: #aab4c8;
       --accent: #1a3a6b;
@@ -59,7 +59,7 @@
       --accent-vert: #1a5c20;
       --text-main: #000000;
       --text-muted: #333355;
-      --text-code: #bde0f0;
+    --text-code: #0a0a0a;
       --cell-mur: #4a5a7a;
       --cell-sol: #e0e8f5;
       --cell-cible: #c8dcff;

@@ -1816,8 +1816,6 @@ test_index()
       </div>
     </section>
 
-    
-
 
     <!-- ═══════════════════════════════════════════
      PARTIE 6 — PRÉPARATION BAC 2026 (FORMAT EP2 CONFORME BO N°46)
@@ -1862,8 +1860,11 @@ test_index()
         <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-muted);">Choisir un sujet
           :</span>
         <button class="btn-tp actif" id="btn-s1" onclick="afficherSujet(1)">Sujet 1 — Serveur de scores</button>
-        <button class="btn-tp-vert" id="btn-s2" onclick="afficherSujet(2)">Sujet 2 — Éditeur de niveaux</button>
-        <button class="btn-tp" id="btn-s3" onclick="afficherSujet(3)">Sujet 3 — Débogage Arcade</button>
+        <button class="btn-tp-or" id="btn-s2" onclick="afficherSujet(2)">Sujet 2 — Analyse de trames</button>
+        <button class="btn-tp-vert" id="btn-s3" onclick="afficherSujet(3)">Sujet 3 — Éditeur de niveaux</button>
+        <button class="btn-tp" id="btn-s4" onclick="afficherSujet(4)">Sujet 4 — Débogage Arcade</button>
+        <button class="btn-tp" id="btn-s5" onclick="afficherSujet(5)"
+          style="border-color:var(--accent-vert);color:var(--accent-vert);">📝 Épreuve écrite</button>
       </div>
 
       <!-- ══════════════════════════════════════
@@ -2250,15 +2251,337 @@ test_serveur()
       </div><!-- /sujet1 -->
 
 
-
       <!-- ══════════════════════════════════════════════════════════════════
-       SUJET 2— ÉDITEUR DE NIVEAUX
+       SUJET 2 — ANALYSE DE TRAMES BINAIRES
   ══════════════════════════════════════════════════════════════════ -->
       <div id="sujet2" class="sujet-ep2" style="display:none;">
 
         <div class="encadre-ep2" style="margin-bottom:1.2rem;">
           <div class="ep2-barre">
-            <span class="ep2-label">Sujet 2 — Éditeur de niveaux &nbsp;<span class="badge-diff diff-ep2">Format officiel
+            <span class="ep2-label">Sujet 2 — Analyse de trames binaires &nbsp;<span class="badge-diff diff-ep2">Format
+                officiel 2026</span></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);">4 questions ·
+              1 heure</span>
+          </div>
+          <div style="padding:.9rem 1.1rem 1.1rem;">
+            <p>Le module DEMETER mesure la température et l'humidité dans les vignobles. Chaque mesure est transmise
+              sous forme d'une <strong>trame de 40 bits</strong> structurée ainsi :</p>
+            <div class="trame-viz">
+              <span class="trame-bloc tb-id">ID<br />8 bits</span>
+              <span class="trame-bloc tb-cle">Clé sécu<br />8 bits</span>
+              <span class="trame-bloc tb-temp">Température<br />12 bits</span>
+              <span class="trame-bloc tb-hum">Humidité<br />8 bits</span>
+              <span class="trame-bloc tb-ctrl">Contrôle<br />4 bits</span>
+            </div>
+            <p style="margin-bottom:.3rem;"><strong>Exemple de trame :</strong>
+              <code>00101010 11001000 010010001100 01100010 1101</code>
+            </p>
+            <ul style="font-size:.9rem;">
+              <li><strong>ID</strong> (bits 0:8) : identifiant du module en binaire.</li>
+              <li><strong>Température</strong> (bits 16:28) : valeur binaire → décimal → soustraire 900 → diviser par
+                10. Exemple : <code>010010001100</code> = 1164 → (1164−900)/10 = <strong>26.4 °C</strong>.</li>
+              <li><strong>Humidité</strong> (bits 28:36) : codage BCD — chaque nibble de 4 bits encode un chiffre
+                décimal. Exemple : <code>01100010</code> → <code>0110</code>=6, <code>0010</code>=2 → <strong>62
+                  %</strong>. Exception : <code>10100000</code> = 100 %.</li>
+              <li><strong>Bits de contrôle</strong> (bits 36:40) : bit de parité de chaque bloc (0 si nb de '1' pair, 1
+                sinon).</li>
+            </ul>
+            <p>Indication Python : <code>int(chaine, 2)</code> convertit une chaîne binaire en entier.</p>
+          </div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="encadre-ep2" style="margin-bottom:1rem;">
+          <div style="padding:1rem 1.1rem .3rem;">
+            <h4 class="titre-exo">Question 1 — Décodage de la température et de l'humidité <span
+                class="badge-diff diff-base">Débutant</span></h4>
+            <p>Dans le fichier <code>transmission.py</code>, écrire en autonomie la fonction
+              <code>decoder_temperature(trame)</code> qui prend une chaîne de 40 caractères binaires et retourne la
+              température sous forme de <strong>flottant</strong>. Écrire ensuite <code>decoder_humidite(trame)</code>
+              qui retourne l'humidité sous forme d'<strong>entier</strong>.
+            </p>
+            <p>Écrire des tests pour vérifier que ces fonctions retournent bien <strong>26.4</strong> et
+              <strong>62</strong> avec la trame d'exemple.
+            </p>
+          </div>
+          <div style="padding:0 1.1rem .3rem;">
+            <button class="btn-secondaire" onclick="toggleBloc('ind-s2q1a')"> Indice Température</button>
+            <button class="btn-secondaire" onclick="toggleBloc('ind-s2q1b')"> Indice Humidité BCD</button>
+            <div class="bloc-cache encadre-indice" id="ind-s2q1a">
+              <span class="encadre-prefix">Indice — Température</span>
+              <p><code>bits_temp = trame[16:28]</code>, puis <code>(int(bits_temp, 2) - 900) / 10</code>.</p>
+            </div>
+            <div class="bloc-cache encadre-indice" id="ind-s2q1b">
+              <span class="encadre-prefix">Indice — Humidité BCD</span>
+              <p>Cas exceptionnel d'abord : si <code>trame[28:36] == '10100000'</code> → retourner 100. Sinon :
+                <code>dizaine = int(trame[28:32], 2)</code>, <code>unite = int(trame[32:36], 2)</code>, retourner
+                <code>dizaine * 10 + unite</code>.
+              </p>
+            </div>
+            <button class="btn-secondaire" style="margin-top:.4rem;" onclick="toggleBloc('rep-s2q1')">✅ Voir la
+              correction</button>
+            <div class="bloc-cache encadre-indice" id="rep-s2q1">
+              <span class="encadre-prefix">Correction</span>
+              <pre><code>def decoder_temperature(trame):
+    return (int(trame[16:28], 2) - 900) / 10
+
+def decoder_humidite(trame):
+    bits_hum = trame[28:36]
+    if bits_hum == '10100000':
+        return 100
+    return int(bits_hum[:4], 2) * 10 + int(bits_hum[4:], 2)</code></pre>
+            </div>
+          </div>
+          <script type="py-editor" env="s2q1">
+TRAME_EXEMPLE = "0010101011001000010010001100011000101101"
+
+def decoder_temperature(trame):
+    """
+    Extrait les bits 16:28, convertit en décimal, soustrait 900, divise par 10.
+    Retourne un flottant.
+    À compléter.
+    """
+    pass
+
+def decoder_humidite(trame):
+    """
+    Décode les bits 28:36 en BCD (2 nibbles de 4 bits = 2 chiffres décimaux).
+    Exception : '10100000' = 100.
+    Retourne un entier.
+    À compléter.
+    """
+    pass
+
+# Écrire les tests ici :
+def test_decodage():
+    assert decoder_temperature(TRAME_EXEMPLE) == 26.4
+    assert decoder_humidite(TRAME_EXEMPLE)    == 62
+    trame_100 = "0010101011001000010010001100101000001101"
+    assert decoder_humidite(trame_100)        == 100
+    print("Les tests sont validés.")
+
+test_decodage()
+      </script>
+          <p style="padding:.2rem 1.1rem .9rem;"><span class="appel-prof">📋 Appel professeur</span> Présente tes deux
+            fonctions et leurs tests.</p>
+        </div>
+
+        <!-- Q2 -->
+        <div class="encadre-ep2" style="margin-bottom:1rem;">
+          <div style="padding:1rem 1.1rem .3rem;">
+            <h4 class="titre-exo">Question 2 — Vérification de la parité <span
+                class="badge-diff diff-inter">Intermédiaire</span></h4>
+            <p>Écrire la fonction <code>est_valide(trame)</code> qui retourne <code>True</code> si les 4 bits de
+              contrôle (bits 36:40) correspondent bien à la parité des 4 blocs de données (ID, Clé, Température,
+              Humidité), <code>False</code> sinon.</p>
+            <p>Rappel : le bit de parité d'un bloc vaut <code>0</code> si le nombre de <code>'1'</code> dans ce bloc est
+              <em>pair</em>, <code>1</code> s'il est <em>impair</em>. Pour la trame exemple, l'ID <code>00101010</code>
+              contient 3 <code>'1'</code> (impair) → premier bit de contrôle = <code>1</code>.
+            </p>
+          </div>
+          <div style="padding:0 1.1rem .3rem;">
+            <button class="btn-secondaire" onclick="toggleBloc('ind-s2q2')"> Indice</button>
+            <div class="bloc-cache encadre-indice" id="ind-s2q2">
+              <span class="encadre-prefix">Indice</span>
+              <p>Définis les 4 blocs : <code>blocs = [trame[0:8], trame[8:16], trame[16:28], trame[28:36]]</code>. Pour
+                chaque bloc : <code>bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'</code>. Compare avec
+                <code>trame[36+i]</code>.
+              </p>
+            </div>
+            <button class="btn-secondaire" style="margin-top:.4rem;" onclick="toggleBloc('rep-s2q2')">✅ Voir la
+              correction</button>
+            <div class="bloc-cache encadre-indice" id="rep-s2q2">
+              <span class="encadre-prefix">Correction</span>
+              <pre><code>def est_valide(trame):
+    blocs = [trame[0:8], trame[8:16], trame[16:28], trame[28:36]]
+    for i, bloc in enumerate(blocs):
+        bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'
+        if trame[36 + i] != bit_attendu:
+            return False
+    return True</code></pre>
+            </div>
+          </div>
+          <script type="py-editor" env="s2q2">
+TRAME_OK     = "0010101011001000010010001100011000101101"
+TRAME_ERR    = "0010101011001000010010001100011000101100"  # dernier bit modifié
+
+def est_valide(trame):
+    """
+    Vérifie la parité des 4 blocs (ID, Clé, Temp, Hum) contre les 4 bits de contrôle.
+    Retourne True si tout est cohérent, False sinon.
+    À compléter.
+    """
+    pass
+
+def test_validite():
+    assert est_valide(TRAME_OK)  == True
+    assert est_valide(TRAME_ERR) == False
+    print("Les tests sont validés.")
+
+test_validite()
+      </script>
+          <p style="padding:.2rem 1.1rem .9rem;"><span class="appel-prof">📋 Appel professeur</span> Présente ta
+            fonction <code>est_valide</code>.</p>
+        </div>
+
+        <!-- Q3 -->
+        <div class="encadre-ep2" style="margin-bottom:1rem;">
+          <div style="padding:1rem 1.1rem .3rem;">
+            <h4 class="titre-exo">Question 3 — Identifier le bug dans <code>analyser_fichier</code> <span
+                class="badge-diff diff-inter">Intermédiaire</span></h4>
+            <p>La fonction ci-dessous est censée analyser un ensemble de trames et afficher les mesures valides. En
+              l'exécutant, elle produit une erreur. <strong>Identifie la cause du plantage</strong> en observant les
+              données.</p>
+            <div class="encadre-bac">
+              <span class="encadre-prefix">Extrait de data.txt — trames réelles (certaines corrompues)</span>
+              <pre><code>0010101011001000010010001100011000101101
+0010101011001000010010001100011000101101
+TRAME_CORROMPUE_ICI
+0010101011001000010010010000011000100110
+0010101011001000010010001100011000101101</code></pre>
+            </div>
+          </div>
+          <div style="padding:0 1.1rem .3rem;">
+            <button class="btn-secondaire" onclick="toggleBloc('rep-s2q3')"> Analyse du bug</button>
+            <div class="bloc-cache encadre-indice" id="rep-s2q3">
+              <span class="encadre-prefix">Analyse</span>
+              <p><strong>Cause :</strong> la ligne <code>"TRAME_CORROMPUE_ICI"</code> ne fait pas 40 caractères. Lorsque
+                <code>decoder_temperature</code> tente <code>int(trame[16:28], 2)</code> sur une chaîne contenant des
+                lettres, Python lève <code>ValueError: invalid literal for int() with base 2</code>. La fonction plante
+                sans traiter les trames suivantes.
+              </p>
+            </div>
+          </div>
+          <script type="py-editor" env="s2q3">
+# Données simulant data.txt avec une trame corrompue
+DATA = """0010101011001000010010001100011000101101
+0010101011001000010010001100011000101101
+TRAME_CORROMPUE_ICI
+0010101011001000010010010000011000100110
+0010101011001000010010001100011000101101"""
+
+def decoder_temperature(trame):
+    return (int(trame[16:28], 2) - 900) / 10
+
+def decoder_humidite(trame):
+    bits_hum = trame[28:36]
+    if bits_hum == '10100000': return 100
+    return int(bits_hum[:4], 2) * 10 + int(bits_hum[4:], 2)
+
+def est_valide(trame):
+    blocs = [trame[0:8], trame[8:16], trame[16:28], trame[28:36]]
+    for i, bloc in enumerate(blocs):
+        if trame[36 + i] != ('1' if bloc.count('1') % 2 else '0'):
+            return False
+    return True
+
+def analyser_fichier(data):
+    """Plante sur les trames corrompues — observe l'erreur."""
+    for trame in data.strip().split('\n'):
+        if est_valide(trame):
+            t = decoder_temperature(trame)
+            h = decoder_humidite(trame)
+            print(f"Température : {t} °C | Humidité : {h} %")
+
+analyser_fichier(DATA)
+      </script>
+          <p style="padding:.2rem 1.1rem .9rem;"><span class="appel-prof">📋 Appel professeur</span> Explique oralement
+            la cause du bug avant de passer à Q4.</p>
+        </div>
+
+        <!-- Q4 -->
+        <div class="encadre-ep2" style="margin-bottom:1.5rem;">
+          <div style="padding:1rem 1.1rem .3rem;">
+            <h4 class="titre-exo">Question 4 — Rendre <code>analyser_fichier</code> robuste <span
+                class="badge-diff diff-avance">Avancé</span></h4>
+            <p>Propose une correction de <code>analyser_fichier</code> la rendant <strong>robuste</strong> : une trame
+              mal formée (longueur incorrecte, caractères non binaires…) est ignorée silencieusement et le traitement
+              continue sur les trames suivantes.</p>
+          </div>
+          <div style="padding:0 1.1rem .3rem;">
+            <button class="btn-secondaire" onclick="toggleBloc('ind-s2q4')"> Indice</button>
+            <div class="bloc-cache encadre-indice" id="ind-s2q4">
+              <span class="encadre-prefix">Indice</span>
+              <p>Encadre le traitement de chaque trame dans un bloc <code>try/except (ValueError, IndexError)</code>.
+                Ajoute également une vérification de longueur : <code>if len(trame) != 40: continue</code>.</p>
+            </div>
+            <button class="btn-secondaire" style="margin-top:.4rem;" onclick="toggleBloc('rep-s2q4')">✅ Voir la
+              correction</button>
+            <div class="bloc-cache encadre-indice" id="rep-s2q4">
+              <span class="encadre-prefix">Correction</span>
+              <pre><code>def analyser_fichier(data):
+    for trame in data.strip().split('\n'):
+        trame = trame.strip()
+        if len(trame) != 40:
+            continue
+        try:
+            if not est_valide(trame):
+                continue
+            t = decoder_temperature(trame)
+            h = decoder_humidite(trame)
+            print(f"Température : {t} °C | Humidité : {h} %")
+        except (ValueError, IndexError):
+            continue</code></pre>
+            </div>
+          </div>
+          <script type="py-editor" env="s2q4">
+DATA = """0010101011001000010010001100011000101101
+0010101011001000010010001100011000101101
+TRAME_CORROMPUE_ICI
+0010101011001000010010010000011000100110
+0010101011001000010010001100011000101101"""
+
+def decoder_temperature(trame):
+    return (int(trame[16:28], 2) - 900) / 10
+
+def decoder_humidite(trame):
+    bits_hum = trame[28:36]
+    if bits_hum == '10100000': return 100
+    return int(bits_hum[:4], 2) * 10 + int(bits_hum[4:], 2)
+
+def est_valide(trame):
+    if len(trame) != 40: return False
+    blocs = [trame[0:8], trame[8:16], trame[16:28], trame[28:36]]
+    for i, bloc in enumerate(blocs):
+        if trame[36 + i] != ('1' if bloc.count('1') % 2 else '0'):
+            return False
+    return True
+
+def analyser_fichier(data):
+    """
+    Traite chaque trame du fichier.
+    Version robuste à compléter : ignore les trames invalides sans planter.
+    À compléter.
+    """
+    pass
+
+def test_robustesse():
+    # Ne doit pas lever d'exception et afficher 4 mesures valides
+    import io, sys
+    old = sys.stdout
+    sys.stdout = buf = io.StringIO()
+    analyser_fichier(DATA)
+    sys.stdout = old
+    lignes = [l for l in buf.getvalue().strip().split('\n') if l]
+    assert len(lignes) == 4, f"Attendu 4 lignes, obtenu {len(lignes)}"
+    print(f"Robustesse OK : {len(lignes)} trames valides traitées.")
+
+test_robustesse()
+      </script>
+          <p style="padding:.2rem 1.1rem .9rem;"><span class="appel-prof">📋 Appel professeur</span> Présente ta version
+            robuste. C'est la fin du sujet 2.</p>
+        </div>
+      </div><!-- /sujet2 -->
+
+
+      <!-- ══════════════════════════════════════════════════════════════════
+       SUJET 3 — ÉDITEUR DE NIVEAUX
+  ══════════════════════════════════════════════════════════════════ -->
+      <div id="sujet3" class="sujet-ep2" style="display:none;">
+
+        <div class="encadre-ep2" style="margin-bottom:1.2rem;">
+          <div class="ep2-barre">
+            <span class="ep2-label">Sujet 3 — Éditeur de niveaux &nbsp;<span class="badge-diff diff-ep2">Format officiel
                 2026</span></span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);">4 questions ·
               1 heure</span>
@@ -2598,12 +2921,130 @@ test_validateur()
         </div>
       </div><!-- /sujet3 -->
 
+
+      <!-- ══════════════════════════════════════════════════════════════════
+       SUJET 5 — ÉPREUVE ÉCRITE — QUESTIONS TYPE BAC
+  ══════════════════════════════════════════════════════════════════ -->
+      <div id="sujet5" class="sujet-ep2" style="display:none;">
+
+        <h3 class="titre-sous" style="margin-top:1rem;">6.4 Épreuve écrite — Questions type bac <span
+            class="badge-diff diff-avance" style="margin-left:.5rem;">Partie 1 du bac</span></h3>
+
+        <div class="encadre-attention" style="margin-bottom:1rem;">
+          <span class="encadre-prefix">⚠️ Ces questions relèvent de l'épreuve écrite (Partie 1), pas de l'EP2</span>
+          <p>L'épreuve écrite dure 3h30 et porte sur l'ensemble du programme de NSI Terminale. Elle est distincte de
+            l'épreuve pratique. Ces questions d'entraînement sont à traiter à l'écrit, sans ordinateur.</p>
+        </div>
+
+        <div class="encadre-bac">
+          <span class="encadre-prefix">Questions — à traiter à l'écrit, sans ordinateur</span>
+          <ol>
+            <li>Quelle est la différence entre une <strong>pile</strong> et une <strong>file</strong> ? Citer un
+              algorithme de ce projet utilisant chacune.</li>
+            <li>Écrire la requête SQL qui retourne le pseudo et le meilleur score des 3 meilleurs joueurs sur le niveau
+              2.
+              (<em>JOIN, WHERE, GROUP BY, ORDER BY, LIMIT</em>)</li>
+            <li>Donner le <strong>variant</strong> de la fonction récursive
+              <code>nb_caisses_placees(grille, idx)</code>.
+              Justifier que la récursion se termine.</li>
+            <li>Expliquer pourquoi le BFS garantit le chemin le plus court et pas le DFS. Quelle structure de données
+              chacun utilise-t-il ?</li>
+            <li>Quelle est la complexité temporelle du BFS dans un graphe à V sommets et E arêtes ? Justifier en une
+              phrase.</li>
+            <li>Comparer mémoïsation et tabulation : avantages et limites de chacune.</li>
+            <li>Dans <code>NiveauChrono</code>, pourquoi appeler <code>super().__init__()</code> avant d'initialiser
+              <code>self.temps_limite</code> ?
+            </li>
+            <li>Dans le Sujet 1, pourquoi utilise-t-on <code>try/except ValueError</code> dans <code>lire_csv</code>
+              plutôt que de tester la chaîne avec <code>.isdigit()</code> ?</li>
+          </ol>
+        </div>
+
+        <h3 class="titre-sous">6.5 Trace d'exécution récursive — entraînement écrit</h3>
+
+        <div class="encadre-bac">
+          <span class="encadre-prefix">Exercice — Compléter le tableau de la pile d'appels</span>
+          <p>On appelle <code>nb_caisses_placees(g, 0)</code> avec
+            <code>g = [['#','*','#'],['#','$','#'],['#','*','#']]</code>.
+          </p>
+          <table class="table-etats">
+            <tr>
+              <th>Appel</th>
+              <th>idx</th>
+              <th>g[idx].count('*')</th>
+              <th>Retourne</th>
+            </tr>
+            <tr>
+              <td class="complet">nb_caisses(g, 0)</td>
+              <td class="complet">0</td>
+              <td class="complet">1</td>
+              <td class="vide">1 + ?</td>
+            </tr>
+            <tr>
+              <td class="vide">?</td>
+              <td class="vide">1</td>
+              <td class="vide">?</td>
+              <td class="vide">?</td>
+            </tr>
+            <tr>
+              <td class="vide">?</td>
+              <td class="vide">2</td>
+              <td class="vide">?</td>
+              <td class="vide">?</td>
+            </tr>
+            <tr>
+              <td class="vide">?</td>
+              <td class="vide">3</td>
+              <td class="complet">CAS DE BASE</td>
+              <td class="complet">0</td>
+            </tr>
+          </table>
+          <button class="btn-secondaire" onclick="toggleBloc('rep-trace')">Voir la réponse</button>
+          <div class="bloc-cache encadre-indice" id="rep-trace">
+            <span class="encadre-prefix">Réponse complète</span>
+            <table class="table-etats">
+              <tr>
+                <th>Appel</th>
+                <th>idx</th>
+                <th>count('*')</th>
+                <th>Retourne</th>
+              </tr>
+              <tr>
+                <td>nb_caisses(g, 0)</td>
+                <td>0</td>
+                <td>1</td>
+                <td>1 + 0 + 1 + 0 = <strong>2</strong></td>
+              </tr>
+              <tr>
+                <td>nb_caisses(g, 1)</td>
+                <td>1</td>
+                <td>0</td>
+                <td>0 + 1 + 0 = 1</td>
+              </tr>
+              <tr>
+                <td>nb_caisses(g, 2)</td>
+                <td>2</td>
+                <td>1</td>
+                <td>1 + 0 = 1</td>
+              </tr>
+              <tr>
+                <td>nb_caisses(g, 3)</td>
+                <td>3</td>
+                <td>CAS DE BASE</td>
+                <td>0</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /sujet5 -->
+
       <!-- ═══ SUJET EP2 ARCADE ═══ -->
-      <div id="sujet3" class="sujet-ep2" style="display:none;">
+      <div id="sujet4" class="sujet-ep2" style="display:none;">
 
         <div class="encadre-ep2" style="margin-bottom:1.2rem;">
           <div class="ep2-barre">
-            <span class="ep2-label">Sujet 3 — Débogage Arcade &nbsp;<span class="badge-diff diff-ep2">Format officiel
+            <span class="ep2-label">Sujet 4 — Débogage Arcade &nbsp;<span class="badge-diff diff-ep2">Format officiel
                 2026</span></span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);">3 questions ·
               1 heure</span>
@@ -2970,11 +3411,11 @@ test_coin_mort()
 
     /* ══ SÉLECTEUR DE SUJET ══ */
     function afficherSujet(n) {
-      [1, 2, 3, 4].forEach(i => {
+      [1, 2, 3, 4, 5].forEach(i => {
         const _suj = document.getElementById('sujet' + i);
         if (_suj) _suj.style.display = i === n ? 'block' : 'none';
       });
-      document.querySelectorAll('#btn-s1,#btn-s2,#btn-s3').forEach(b => b.style.opacity = '0.5');
+      document.querySelectorAll('#btn-s1,#btn-s2,#btn-s3,#btn-s4,#btn-s5').forEach(b => b.style.opacity = '0.5');
       const actif = document.getElementById('btn-s' + n);
       if (actif) actif.style.opacity = '1';
     }

@@ -1816,6 +1816,8 @@ test_index()
       </div>
     </section>
 
+    
+
 
     <!-- ═══════════════════════════════════════════
      PARTIE 6 — PRÉPARATION BAC 2026 (FORMAT EP2 CONFORME BO N°46)
@@ -2250,7 +2252,7 @@ test_serveur()
 
 
       <!-- ══════════════════════════════════════════════════════════════════
-       SUJET 3 — ÉDITEUR DE NIVEAUX
+       SUJET 2— ÉDITEUR DE NIVEAUX
   ══════════════════════════════════════════════════════════════════ -->
       <div id="sujet2" class="sujet-ep2" style="display:none;">
 
@@ -2595,118 +2597,6 @@ test_validateur()
           </p>
         </div>
       </div><!-- /sujet3 -->
-
-
-      <!-- ══════════════════════════════════════════════════════════════════
-       ÉPREUVE ÉCRITE — QUESTIONS TYPE BAC
-  ══════════════════════════════════════════════════════════════════ -->
-      <h3 class="titre-sous" style="margin-top:3rem;">6.4 Épreuve écrite — Questions type bac <span
-          class="badge-diff diff-avance" style="margin-left:.5rem;">Partie 1 du bac</span></h3>
-
-      <div class="encadre-attention" style="margin-bottom:1rem;">
-        <span class="encadre-prefix">⚠️ Ces questions relèvent de l'épreuve écrite (Partie 1), pas de l'EP2</span>
-        <p>L'épreuve écrite dure 3h30 et porte sur l'ensemble du programme de NSI Terminale. Elle est distincte de
-          l'épreuve pratique. Ces questions d'entraînement sont à traiter à l'écrit, sans ordinateur.</p>
-      </div>
-
-      <div class="encadre-bac">
-        <span class="encadre-prefix">Questions — à traiter à l'écrit, sans ordinateur</span>
-        <ol>
-          <li>Quelle est la différence entre une <strong>pile</strong> et une <strong>file</strong> ? Citer un
-            algorithme de ce projet utilisant chacune.</li>
-          <li>Écrire la requête SQL qui retourne le pseudo et le meilleur score des 3 meilleurs joueurs sur le niveau 2.
-            (<em>JOIN, WHERE, GROUP BY, ORDER BY, LIMIT</em>)</li>
-          <li>Donner le <strong>variant</strong> de la fonction récursive <code>nb_caisses_placees(grille, idx)</code>.
-            Justifier que la récursion se termine.</li>
-          <li>Expliquer pourquoi le BFS garantit le chemin le plus court et pas le DFS. Quelle structure de données
-            chacun utilise-t-il ?</li>
-          <li>Quelle est la complexité temporelle du BFS dans un graphe à V sommets et E arêtes ? Justifier en une
-            phrase.</li>
-          <li>Comparer mémoïsation et tabulation : avantages et limites de chacune.</li>
-          <li>Dans <code>NiveauChrono</code>, pourquoi appeler <code>super().__init__()</code> avant d'initialiser
-            <code>self.temps_limite</code> ?
-          </li>
-          <li>Dans le Sujet 1, pourquoi utilise-t-on <code>try/except ValueError</code> dans <code>lire_csv</code>
-            plutôt que de tester la chaîne avec <code>.isdigit()</code> ?</li>
-        </ol>
-      </div>
-
-      <h3 class="titre-sous">6.5 Trace d'exécution récursive — entraînement écrit</h3>
-
-      <div class="encadre-bac">
-        <span class="encadre-prefix">Exercice — Compléter le tableau de la pile d'appels</span>
-        <p>On appelle <code>nb_caisses_placees(g, 0)</code> avec
-          <code>g = [['#','*','#'],['#','$','#'],['#','*','#']]</code>.
-        </p>
-        <table class="table-etats">
-          <tr>
-            <th>Appel</th>
-            <th>idx</th>
-            <th>g[idx].count('*')</th>
-            <th>Retourne</th>
-          </tr>
-          <tr>
-            <td class="complet">nb_caisses(g, 0)</td>
-            <td class="complet">0</td>
-            <td class="complet">1</td>
-            <td class="vide">1 + ?</td>
-          </tr>
-          <tr>
-            <td class="vide">?</td>
-            <td class="vide">1</td>
-            <td class="vide">?</td>
-            <td class="vide">?</td>
-          </tr>
-          <tr>
-            <td class="vide">?</td>
-            <td class="vide">2</td>
-            <td class="vide">?</td>
-            <td class="vide">?</td>
-          </tr>
-          <tr>
-            <td class="vide">?</td>
-            <td class="vide">3</td>
-            <td class="complet">CAS DE BASE</td>
-            <td class="complet">0</td>
-          </tr>
-        </table>
-        <button class="btn-secondaire" onclick="toggleBloc('rep-trace')">Voir la réponse</button>
-        <div class="bloc-cache encadre-indice" id="rep-trace">
-          <span class="encadre-prefix">Réponse complète</span>
-          <table class="table-etats">
-            <tr>
-              <th>Appel</th>
-              <th>idx</th>
-              <th>count('*')</th>
-              <th>Retourne</th>
-            </tr>
-            <tr>
-              <td>nb_caisses(g, 0)</td>
-              <td>0</td>
-              <td>1</td>
-              <td>1 + 0 + 1 + 0 = <strong>2</strong></td>
-            </tr>
-            <tr>
-              <td>nb_caisses(g, 1)</td>
-              <td>1</td>
-              <td>0</td>
-              <td>0 + 1 + 0 = 1</td>
-            </tr>
-            <tr>
-              <td>nb_caisses(g, 2)</td>
-              <td>2</td>
-              <td>1</td>
-              <td>1 + 0 = 1</td>
-            </tr>
-            <tr>
-              <td>nb_caisses(g, 3)</td>
-              <td>3</td>
-              <td>CAS DE BASE</td>
-              <td>0</td>
-            </tr>
-          </table>
-        </div>
-      </div>
 
       <!-- ═══ SUJET EP2 ARCADE ═══ -->
       <div id="sujet3" class="sujet-ep2" style="display:none;">

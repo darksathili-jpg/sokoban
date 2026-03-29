@@ -1860,8 +1860,8 @@ test_index()
         <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-muted);">Choisir un sujet
           :</span>
         <button class="btn-tp actif" id="btn-s1" onclick="afficherSujet(1)">Sujet 1 — Serveur de scores</button>
-        <button class="btn-tp-vert" id="btn-s3" onclick="afficherSujet(2)">Sujet 2 — Éditeur de niveaux</button>
-        <button class="btn-tp" id="btn-s4" onclick="afficherSujet(3)">Sujet 3 — Débogage Arcade</button>
+        <button class="btn-tp-vert" id="btn-s2" onclick="afficherSujet(2)">Sujet 2 — Éditeur de niveaux</button>
+        <button class="btn-tp" id="btn-s3" onclick="afficherSujet(3)">Sujet 3 — Débogage Arcade</button>
       </div>
 
       <!-- ══════════════════════════════════════
@@ -3084,7 +3084,7 @@ test_coin_mort()
         const _suj = document.getElementById('sujet' + i);
         if (_suj) _suj.style.display = i === n ? 'block' : 'none';
       });
-      document.querySelectorAll('#btn-s1,#btn-s2,#btn-s3,#btn-s4').forEach(b => b.style.opacity = '0.5');
+      document.querySelectorAll('#btn-s1,#btn-s2,#btn-s3').forEach(b => b.style.opacity = '0.5');
       const actif = document.getElementById('btn-s' + n);
       if (actif) actif.style.opacity = '1';
     }

@@ -113,7 +113,7 @@ body {
   margin-bottom:.6rem;
 }
 .sous-titre { font-size:.9rem; color:var(--text-muted); margin:.4rem 0 1rem; }
-#img_sokoban { width:min(180px,55vw); margin:.6rem auto; display:block; border-radius:.5rem; }
+#img_sokoban { width:max(40%, 400px); }
 .badge-bo {
   display:inline-block;
   background:var(--bg3); border:1px solid var(--border);
